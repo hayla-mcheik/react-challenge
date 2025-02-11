@@ -23,3 +23,61 @@ body {
 body {
   font-family: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
+
+/* General container */
+.employees-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Search box */
+.search{
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Table styling */
+.employees-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.employees-table th, .employees-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.employees-table th {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+.employees-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Navigation links */
+.nav-links {
+  margin-top: 15px;
+  padding: 0;
+  list-style-type: none;
+}
+
+.nav-links li {
+  display: inline;
+  margin-right: 15px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}

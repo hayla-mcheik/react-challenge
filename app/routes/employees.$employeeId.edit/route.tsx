@@ -1,7 +1,6 @@
-import { useLoaderData, Link, Form } from "react-router";
+import { useLoaderData, Form, redirect } from "react-router";
 import { getDB } from "~/db/getDB";
 import type { CSSProperties } from "react"; 
-
 
 interface Employee {
   id: number;
@@ -22,12 +21,32 @@ export async function loader({ params }: { params: { employeeId: string } }) {
   return { employee };
 }
 
-export default function EmployeePage() {
+export async function action({ request, params }: { request: Request; params: { employeeId: string } }) {
+  const formData = await request.formData();
+  const id = params.employeeId;
+  const full_name = formData.get("full_name");
+  const email = formData.get("email");
+  const phone_number = formData.get("phone");
+  const job_title = formData.get("job_title");
+  const department = formData.get("department");
+  const salary = formData.get("salary");
+
+  const db = await getDB();
+  await db.run(
+    "UPDATE employees SET full_name = ?, email = ?, phone = ?, job_title = ?, department = ?, salary = ? WHERE id = ?",
+    [full_name, email, phone_number, job_title, department, salary, id]
+  );
+
+  return redirect("/employees");
+}
+
+export default function EmployeeEditPage() {
   const { employee } = useLoaderData() as { employee: Employee };
   return (
     <div style={styles.container}>
-      <h1 style={styles.header}>Employee Details</h1>
+      <h1 style={styles.header}>Edit Employee</h1>
 
+      {/* Employee Form */}
       <Form method="post" style={styles.form}>
         <div style={styles.formGroup}>
           <label htmlFor="full_name" style={styles.label}>
@@ -114,20 +133,9 @@ export default function EmployeePage() {
         </div>
 
         <button type="submit" style={styles.submitButton}>
-          Update Employee
+          Save Changes
         </button>
       </Form>
-
-      <hr style={styles.divider} />
-
-      <div style={styles.navigation}>
-        <Link to="/employees" style={styles.navLink}>
-          Back to Employees
-        </Link>
-        <Link to="/timesheets/" style={styles.navLink}>
-          Timesheets
-        </Link>
-      </div>
     </div>
   );
 }
@@ -138,6 +146,9 @@ const styles: { [key: string]: CSSProperties } = {
     padding: "20px",
     maxWidth: "600px",
     margin: "0 auto",
+    backgroundColor: "#f9f9f9",
+    borderRadius: "10px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   },
   header: {
     textAlign: "center",
@@ -157,12 +168,15 @@ const styles: { [key: string]: CSSProperties } = {
   label: {
     fontWeight: "bold",
     color: "#555",
+    fontSize: "14px",
   },
   input: {
     padding: "10px",
     borderRadius: "5px",
     border: "1px solid #ccc",
     fontSize: "16px",
+    backgroundColor: "#fff",
+    transition: "border-color 0.3s ease",
   },
   submitButton: {
     padding: "10px 20px",
@@ -173,21 +187,6 @@ const styles: { [key: string]: CSSProperties } = {
     cursor: "pointer",
     fontSize: "16px",
     marginTop: "10px",
-  },
-  divider: {
-    border: "none",
-    borderTop: "1px solid #ccc",
-    margin: "20px 0",
-  },
-  navigation: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  navLink: {
-    padding: "10px 20px",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    textDecoration: "none",
-    borderRadius: "5px",
+    transition: "background-color 0.3s ease",
   },
 };

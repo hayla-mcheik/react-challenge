@@ -3,10 +3,10 @@ import { getDB } from "~/db/getDB";
 import type { CSSProperties } from "react"; 
 
 interface Employee {
+  phone: string | number | readonly string[] | undefined;
   id: number;
   full_name: string;
   email: string;
-  phone_number: string;
   job_title: string;
   department: string;
   salary: number;
@@ -26,7 +26,7 @@ export async function action({ request, params }: { request: Request; params: { 
   const id = params.employeeId;
   const full_name = formData.get("full_name");
   const email = formData.get("email");
-  const phone_number = formData.get("phone");
+  const phone = formData.get("phone");
   const job_title = formData.get("job_title");
   const department = formData.get("department");
   const salary = formData.get("salary");
@@ -34,7 +34,7 @@ export async function action({ request, params }: { request: Request; params: { 
   const db = await getDB();
   await db.run(
     "UPDATE employees SET full_name = ?, email = ?, phone = ?, job_title = ?, department = ?, salary = ? WHERE id = ?",
-    [full_name, email, phone_number, job_title, department, salary, id]
+    [full_name, email, phone, job_title, department, salary, id]
   );
 
   return redirect("/employees");
@@ -46,7 +46,7 @@ export default function EmployeeEditPage() {
     <div style={styles.container}>
       <h1 style={styles.header}>Edit Employee</h1>
 
-      {/* Employee Form */}
+
       <Form method="post" style={styles.form}>
         <div style={styles.formGroup}>
           <label htmlFor="full_name" style={styles.label}>
@@ -77,14 +77,14 @@ export default function EmployeeEditPage() {
         </div>
 
         <div style={styles.formGroup}>
-          <label htmlFor="phone_number" style={styles.label}>
+          <label htmlFor="phone" style={styles.label}>
             Phone Number
           </label>
           <input
             type="tel"
-            name="phone_number"
-            id="phone_number"
-            defaultValue={employee.phone_number}
+            name="phone"
+            id="phone"
+            defaultValue={employee.phone}
             required
             style={styles.input}
           />

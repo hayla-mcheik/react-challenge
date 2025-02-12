@@ -7,7 +7,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const full_name = formData.get("full_name");
   const email = formData.get("email");
-  const phone_number = formData.get("phone");
+  const phone = formData.get("phone");
   const job_title = formData.get("job_title");
   const department = formData.get("department");
   const salary = formData.get("salary");
@@ -15,7 +15,7 @@ export const action: ActionFunction = async ({ request }) => {
   const db = await getDB();
   await db.run(
     "INSERT INTO employees (full_name, email, phone, job_title, department, salary) VALUES (?, ?, ?, ?, ?, ?)",
-    [full_name, email, phone_number, job_title, department, salary]
+    [full_name, email, phone, job_title, department, salary]
   );
 
   return redirect("/employees");
@@ -54,13 +54,13 @@ export default function NewEmployeePage() {
         </div>
 
         <div style={styles.formGroup}>
-          <label htmlFor="phone_number" style={styles.label}>
+          <label htmlFor="phone" style={styles.label}>
             Phone Number
           </label>
           <input
             type="tel"
-            name="phone_number"
-            id="phone_number"
+            name="phone"
+            id="phone"
             required
             style={styles.input}
           />

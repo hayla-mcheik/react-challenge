@@ -7,7 +7,7 @@ interface Employee {
   id: number;
   full_name: string;
   email: string;
-  phone_number: string;
+  phone: string;
   job_title: string;
   department: string;
   salary: number;
@@ -47,37 +47,40 @@ export default function EmployeesPage() {
           <div style={styles.tableCell}>Salary</div>
           <div style={styles.tableCell}>Actions</div>
         </div>
-        {filteredEmployees.map((employee) => (
-          <div key={employee.id} style={styles.tableRow}>
-            <div style={styles.tableCell}>{employee.id}</div>
-            <div style={styles.tableCell}>
-              <Link to={`/employees/${employee.id}`} style={styles.link}>
-                {employee.full_name}
-              </Link>
-            </div>
-            <div style={styles.tableCell}>{employee.job_title}</div>
-            <div style={styles.tableCell}>{employee.department}</div>
-            <div style={styles.tableCell}>${employee.salary}</div>
-            <div style={styles.tableCell}>
-        
-              <Link to={`/employees/${employee.id}/edit`} style={styles.editButton}>
-                Edit
-              </Link>
-     
-              <Form
-                method="post"
-                action={`/employees/${employee.id}/delete`}
-                style={{ display: "inline" }}
-              >
-                <button type="submit" style={styles.deleteButton}>
-                  Delete
-                </button>
-              </Form>
-            </div>
-          </div>
-        ))}
-      </div>
 
+        {filteredEmployees.length === 0 ? (
+          <div style={styles.noDataMessage}>No employees available</div>
+        ) : (
+          filteredEmployees.map((employee) => (
+            <div key={employee.id} style={styles.tableRow}>
+              <div style={styles.tableCell}>{employee.id}</div>
+              <div style={styles.tableCell}>
+                <Link to={`/employees/${employee.id}`} style={styles.link}>
+                  {employee.full_name}
+                </Link>
+              </div>
+              <div style={styles.tableCell}>{employee.job_title}</div>
+              <div style={styles.tableCell}>{employee.department}</div>
+              <div style={styles.tableCell}>${employee.salary}</div>
+              <div style={styles.tableCell}>
+                <Link to={`/employees/${employee.id}/edit`} style={styles.editButton}>
+                  Edit
+                </Link>
+
+                <Form
+                  method="post"
+                  action={`/employees/${employee.id}/delete`}
+                  style={{ display: "inline" }}
+                >
+                  <button type="submit" style={styles.deleteButton}>
+                    Delete
+                  </button>
+                </Form>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
       <div style={styles.navigation}>
         <Link to="/employees/new" style={styles.navLink}>
           New Employee
@@ -130,6 +133,12 @@ const styles: { [key: string]: CSSProperties } = {
   tableCell: {
     flex: 1,
     padding: "5px",
+  },
+  noDataMessage: {
+    textAlign: "center",
+    color: "#888",
+    fontStyle: "italic",
+    padding: "20px",
   },
   link: {
     color: "#007bff",

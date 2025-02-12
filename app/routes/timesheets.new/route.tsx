@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useLoaderData, Form, redirect, Link } from "react-router";
 import { getDB } from "~/db/getDB";
 import type { ActionFunction } from "react-router";
-import type { CSSProperties } from "react"; 
+import type { CSSProperties } from "react";
 
 interface Employee {
   id: number;
@@ -20,6 +21,10 @@ export const action: ActionFunction = async ({ request }) => {
   const start_time = formData.get("start_time");
   const end_time = formData.get("end_time");
 
+  if (new Date(end_time as string) < new Date(start_time as string)) {
+    return { error: "End time cannot be before start time." };
+  }
+
   const db = await getDB();
   await db.run(
     "INSERT INTO timesheets (employee_id, start_time, end_time) VALUES (?, ?, ?)",
@@ -31,11 +36,36 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewTimesheetPage() {
   const { employees } = useLoaderData() as { employees: Employee[] };
+  const [error, setError] = useState<string | null>(null);
+
+  const handleEndTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const startTime = (document.getElementById("start_time") as HTMLInputElement).value;
+    const endTime = event.target.value;
+
+    if (new Date(endTime) < new Date(startTime)) {
+      setError("End time cannot be before start time.");
+    } else {
+      setError(null);
+    }
+  };
+
+  const handleSubmit = (event: React.FormEvent) => {
+    const startTime = (event.target as HTMLFormElement).start_time.value;
+    const endTime = (event.target as HTMLFormElement).end_time.value;
+    
+    if (new Date(endTime) < new Date(startTime)) {
+      event.preventDefault();
+      setError("End time cannot be before start time.");
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h1 style={styles.header}>Create New Timesheet</h1>
 
-      <Form method="post" style={styles.form}>
+      <Form method="post" onSubmit={handleSubmit} style={styles.form}>
+        {error && <div style={styles.error}>{error}</div>}
+
         <div style={styles.formGroup}>
           <label htmlFor="employee_id" style={styles.label}>
             Employee
@@ -77,6 +107,7 @@ export default function NewTimesheetPage() {
             id="end_time"
             required
             style={styles.input}
+            onChange={handleEndTimeChange}
           />
         </div>
 
@@ -163,5 +194,10 @@ const styles: { [key: string]: CSSProperties } = {
     color: "#fff",
     textDecoration: "none",
     borderRadius: "5px",
+  },
+  error: {
+    color: "red",
+    fontWeight: "bold",
+    marginBottom: "10px",
   },
 };

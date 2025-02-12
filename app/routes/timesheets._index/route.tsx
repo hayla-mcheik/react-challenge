@@ -1,8 +1,7 @@
-import { useLoaderData, Link } from "react-router";
+import { useLoaderData, Link, Form } from "react-router";
 import { useState } from "react";
 import { getDB } from "~/db/getDB";
-import type { CSSProperties } from "react"; 
-
+import type { CSSProperties } from "react";
 
 interface Timesheet {
   id: number;
@@ -47,20 +46,38 @@ export default function TimesheetsPage() {
 
       {view === "table" ? (
         <div style={styles.tableContainer}>
-          <div style={styles.tableHeader}>
-            <div style={styles.tableCell}>ID</div>
-            <div style={styles.tableCell}>Employee</div>
-            <div style={styles.tableCell}>Start Time</div>
-            <div style={styles.tableCell}>End Time</div>
-          </div>
-          {timesheetsAndEmployees.map((timesheet) => (
-            <div key={timesheet.id} style={styles.tableRow}>
-              <div style={styles.tableCell}>{timesheet.id}</div>
-              <div style={styles.tableCell}>{timesheet.full_name}</div>
-              <div style={styles.tableCell}>{timesheet.start_time}</div>
-              <div style={styles.tableCell}>{timesheet.end_time}</div>
-            </div>
-          ))}
+          {timesheetsAndEmployees.length === 0 ? (
+            <div style={styles.noDataMessage}>No timesheets found.</div>
+          ) : (
+            <>
+              <div style={styles.tableHeader}>
+                <div style={styles.tableCell}>ID</div>
+                <div style={styles.tableCell}>Employee</div>
+                <div style={styles.tableCell}>Start Time</div>
+                <div style={styles.tableCell}>End Time</div>
+                <div style={styles.tableCell}>Action</div>
+              </div>
+              {timesheetsAndEmployees.map((timesheet) => (
+                <div key={timesheet.id} style={styles.tableRow}>
+                  <div style={styles.tableCell}>{timesheet.id}</div>
+                  <div style={styles.tableCell}>{timesheet.full_name}</div>
+                  <div style={styles.tableCell}>{timesheet.start_time}</div>
+                  <div style={styles.tableCell}>{timesheet.end_time}</div>
+                  <div style={styles.tableCell}>
+                    <Form
+                      method="post"
+                      action={`/timesheets/${timesheet.id}/delete`}
+                      style={{ display: "inline" }}
+                    >
+                      <button type="submit" style={styles.deleteButton}>
+                        Delete
+                      </button>
+                    </Form>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       ) : (
         <div style={styles.calendarPlaceholder}>
@@ -166,6 +183,7 @@ const styles: { [key: string]: CSSProperties } = {
     margin: "20px 0",
   },
   navigation: {
+    marginTop: "20px",
     display: "flex",
     justifyContent: "space-between",
   },
@@ -175,5 +193,21 @@ const styles: { [key: string]: CSSProperties } = {
     color: "#fff",
     textDecoration: "none",
     borderRadius: "5px",
+  },
+  deleteButton: {
+    padding: "5px 10px",
+    backgroundColor: "#dc3545",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+  noDataMessage: {
+    textAlign: "center",
+    padding: "20px",
+    color: "#555",
+    backgroundColor: "#f9f9f9",
+    borderRadius: "5px",
+    border: "1px solid #ccc",
   },
 };
